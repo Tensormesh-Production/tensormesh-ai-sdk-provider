@@ -1,0 +1,25 @@
+{
+  "name": "tensormesh-ai-sdk-integration-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "@ai-sdk/react": "3.0.170",
+    "@tensormesh/ai-sdk-provider": "file:..",
+    "ai": "^6.0.168",
+    "next": "^15.5.9",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "@types/react": "^18.3.24",
+    "@types/react-dom": "^18.3.7",
+    "typescript": "^6.0.3"
+  }
+}

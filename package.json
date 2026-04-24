@@ -1,0 +1,64 @@
+{
+  "name": "@tensormesh/ai-sdk-provider",
+  "version": "0.1.0",
+  "description": "Tensormesh provider for the Vercel AI SDK.",
+  "license": "Apache-2.0",
+  "type": "module",
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "src",
+    "!src/**/*.test.ts",
+    "!src/**/*.test-d.ts",
+    "CHANGELOG.md",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepack": "npm run build",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run build && node --test tests/*.test.mjs",
+    "test:import": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/import.mjs",
+    "test:serverless": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/serverless.mjs",
+    "test:on-demand": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/on-demand.mjs",
+    "test:tool-calling": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/tool-calling.mjs",
+    "test:structured-output": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/structured-output.mjs"
+  },
+  "keywords": [
+    "tensormesh",
+    "vercel-ai-sdk",
+    "ai-sdk",
+    "openai-compatible"
+  ],
+  "peerDependencies": {
+    "ai": "^6.0.0"
+  },
+  "dependencies": {
+    "@ai-sdk/openai-compatible": "^2.0.41",
+    "@ai-sdk/provider": "^3.0.8",
+    "@ai-sdk/provider-utils": "^4.0.23"
+  },
+  "devDependencies": {
+    "@types/node": "^25.6.0",
+    "ai": "^6.0.168",
+    "typescript": "^6.0.3",
+    "zod": "^4.3.6"
+  }
+}
