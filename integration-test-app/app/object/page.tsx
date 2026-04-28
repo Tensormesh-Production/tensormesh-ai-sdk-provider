@@ -10,8 +10,7 @@ export default function ObjectPage() {
       <section className="panel">
         <h1>Structured Output</h1>
         <p className="subtle">
-          This page exercises <code>Output.object(...)</code> through a real
-          Next.js route.
+          Generate a typed product idea from a shared schema.
         </p>
         <RuntimeSummary
           mode={summary.mode}

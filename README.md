@@ -32,7 +32,7 @@ If you need a customized setup, you can import `createTensormesh` from `@tensorm
 import { createTensormesh } from "@tensormesh/ai-sdk-provider";
 
 const tm = createTensormesh({
-  apiKey: process.env.TENSORMESH_INFERENCE_API_KEY ?? "",
+  apiKey: "YOUR_INFERENCE_API_KEY",
 });
 ```
 
@@ -100,9 +100,8 @@ import { generateText } from "ai";
 import { createTensormesh } from "@tensormesh/ai-sdk-provider";
 
 const tm = createTensormesh({
-  apiKey: process.env.TENSORMESH_INFERENCE_API_KEY ?? "",
-  baseURL: process.env.TENSORMESH_BASE_URL,
-  userId: process.env.TENSORMESH_USER_ID,
+  baseURL: "https://YOUR_ON_DEMAND_BASE_URL/v1",
+  userId: "YOUR_TENSORMESH_USER_ID",
 });
 
 const { text } = await generateText({
@@ -126,8 +125,10 @@ For on-demand, use the served gateway model name exposed by your deployment.
 
 ## Model Capabilities
 
-- The same package supports both serverless and on-demand. On-demand only adds `baseURL` and `userId`.
-- Structured outputs and tool calling are model- and deployment-dependent.
+- The same package supports both serverless and on-demand on the `chat/completions` path. On-demand only adds `baseURL` and `userId`.
+- Text generation and streaming are validated on the currently tested serverless and on-demand models.
+- Structured outputs are enabled in the provider and currently work on most tested models. `MiniMaxAI/MiniMax-M2.5` is intermittent on the current serving path.
+- Tool calling is currently verified with `mistralai/Devstral-2-123B-Instruct-2512`. Tested Qwen variants need serving-side tool parser support, `MiniMaxAI/MiniMax-M2.5` is not cleanly parsed on the current tool path, and GPT OSS tool use belongs to `/v1/responses` rather than this package's `chat/completions` path.
 - The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` because it is a clean validated baseline on the current Tensormesh `chat/completions` path.
 - Serving-side updates may expand or change model-specific capability without any package change.
 

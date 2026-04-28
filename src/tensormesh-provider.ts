@@ -75,7 +75,7 @@ export function createTensormesh(
   const baseURL = withoutTrailingSlash(
     options.baseURL ?? DEFAULT_TENSORMESH_SERVERLESS_BASE_URL,
   );
-  const userId = options.userId ?? process.env[TENSORMESH_USER_ID_ENV_NAME];
+  const userId = options.userId ?? loadOptionalEnv(TENSORMESH_USER_ID_ENV_NAME);
 
   const getHeaders = () =>
     withUserAgentSuffix(
@@ -115,3 +115,12 @@ export function createTensormesh(
 }
 
 export const tensormesh = createTensormesh();
+
+function loadOptionalEnv(name: string): string | undefined {
+  if (typeof process === "undefined") {
+    return undefined;
+  }
+
+  const value = process.env[name];
+  return typeof value === "string" ? value : undefined;
+}

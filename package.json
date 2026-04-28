@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "description": "Tensormesh provider for the Vercel AI SDK.",
   "license": "Apache-2.0",
+  "author": "Tensormesh",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tensormesh-Production/tensormesh-ai-sdk-provider.git"
+  },
+  "homepage": "https://github.com/Tensormesh-Production/tensormesh-ai-sdk-provider#readme",
+  "bugs": {
+    "url": "https://github.com/Tensormesh-Production/tensormesh-ai-sdk-provider/issues"
+  },
   "type": "module",
   "sideEffects": false,
   "publishConfig": {

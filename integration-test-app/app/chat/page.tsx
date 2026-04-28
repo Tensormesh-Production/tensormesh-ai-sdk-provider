@@ -10,8 +10,7 @@ export default function ChatPage() {
       <section className="panel">
         <h1>Streaming Chat</h1>
         <p className="subtle">
-          This page exercises the default <code>/api/chat</code> streaming path
-          with the Tensormesh provider.
+          Stream chat responses from the configured Tensormesh model.
         </p>
         <RuntimeSummary
           mode={summary.mode}

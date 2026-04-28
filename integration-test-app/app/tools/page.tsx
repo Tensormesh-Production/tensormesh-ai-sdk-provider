@@ -10,8 +10,7 @@ export default function ToolsPage() {
       <section className="panel">
         <h1>Tool Calling</h1>
         <p className="subtle">
-          This page uses a server-side weather tool. On the current validated
-          deployment, Devstral is the intended baseline model for this route.
+          Ask for weather and let the model call the server-side tool.
         </p>
         <RuntimeSummary
           mode={summary.mode}

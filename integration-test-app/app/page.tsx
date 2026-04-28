@@ -7,12 +7,10 @@ export default function HomePage() {
   return (
     <main className="stack">
       <section className="hero">
-        <h1>Tensormesh AI SDK Integration App</h1>
+        <h1>Tensormesh AI SDK Starter</h1>
         <p className="subtle">
-          This app is the integration-test companion for{" "}
-          <code>@tensormesh/ai-sdk-provider</code>. It mirrors the AI SDK
-          reference app shape: streaming chat, structured output, and tool
-          calling through Next.js App Router routes.
+          A compact Next.js starter for building chat, structured output, and
+          tool-calling workflows on Tensormesh with the Vercel AI SDK.
         </p>
         <RuntimeSummary
           mode={summary.mode}
@@ -24,26 +22,23 @@ export default function HomePage() {
 
       <section className="feature-grid">
         <article className="feature-card">
-          <h2>Streaming Chat</h2>
+          <h2>Chat</h2>
           <p>
-            Uses <code>useChat</code> on the client and <code>streamText()</code>{" "}
-            on the server.
+            Stream model responses through a Next.js App Router API route.
           </p>
           <a href="/chat">Open chat</a>
         </article>
         <article className="feature-card">
           <h2>Structured Output</h2>
           <p>
-            Uses <code>experimental_useObject</code> with{" "}
-            <code>Output.object(...)</code>.
+            Generate typed objects from a shared Zod schema.
           </p>
           <a href="/object">Open structured output</a>
         </article>
         <article className="feature-card">
           <h2>Tool Calling</h2>
           <p>
-            Uses <code>useChat</code> with a server-side weather tool and
-            multi-step generation.
+            Run a server-side tool loop with a simple weather tool.
           </p>
           <a href="/tools">Open tool calling</a>
         </article>

@@ -1,33 +1,37 @@
-# Tensormesh Integration Test App
+# Tensormesh AI SDK Starter
 
-This is a small Next.js integration app for validating `@tensormesh/ai-sdk-provider`
-in a real Vercel AI SDK application.
+A small Next.js starter for building with Tensormesh through the Vercel AI SDK.
 
-It follows the same general pattern as the AI SDK reference apps:
+It includes:
 
-- `useChat` + App Router API route for streaming chat
-- `experimental_useObject` + App Router API route for structured output
-- `useChat` + App Router API route for tool calling
+- Streaming chat with `useChat` and `streamText()`
+- Structured output with `experimental_useObject` and `Output.object(...)`
+- Server-side tool calling with `streamText()` and `tool(...)`
+- Serverless by default, with optional on-demand settings
 
-## What It Covers
+## Deploy To Vercel
 
-- Streaming chat with `streamText()`
-- Structured output with `streamText()` + `Output.object(...)`
-- Server-side tool calling with `streamText()` + `tool(...)`
-- Both serverless and on-demand, using the same package API
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider&project-name=tensormesh-ai-sdk-starter&repository-name=tensormesh-ai-sdk-starter&root-directory=integration-test-app&env=TENSORMESH_INFERENCE_API_KEY,TENSORMESH_CHAT_MODEL,TENSORMESH_STRUCTURED_MODEL,TENSORMESH_TOOL_MODEL&envDescription=TensorMesh%20API%20key%20and%20model%20names%20for%20the%20starter&envLink=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider%2Ftree%2Fmain%2Fintegration-test-app%23environment-variables)
 
-## Setup
+The deploy button assumes this repository is public and uses `integration-test-app`
+as the Vercel root directory. Until `@tensormesh/ai-sdk-provider` is published,
+this starter intentionally depends on the local package with `file:..`.
 
-1. Copy `.env.local.example` to `.env.local`
-2. Fill in `TENSORMESH_INFERENCE_API_KEY`
-3. Optional: set `TENSORMESH_BASE_URL` and `TENSORMESH_USER_ID` for on-demand
-4. Install dependencies:
+## Local Setup
+
+Copy the example environment file:
+
+```sh
+cp .env.local.example .env.local
+```
+
+Fill in `TENSORMESH_INFERENCE_API_KEY`, then install dependencies:
 
 ```sh
 npm install
 ```
 
-5. Run the app:
+Run the starter:
 
 ```sh
 npm run dev
@@ -35,8 +39,41 @@ npm run dev
 
 Then open `http://localhost:3000`.
 
-## Notes
+## Environment Variables
 
-- The default models in `.env.local.example` use Devstral because it is the cleanest current baseline on the package `chat/completions` path.
-- Qwen tool calling and MiniMax tool calling are still deployment-dependent and are not good defaults for the tool route.
-- GPT OSS remains useful for chat on this package path, but its tool-use path is `/v1/responses`, not this app.
+Required:
+
+- `TENSORMESH_INFERENCE_API_KEY`
+- `TENSORMESH_CHAT_MODEL`
+
+Optional:
+
+- `TENSORMESH_STRUCTURED_MODEL`
+- `TENSORMESH_TOOL_MODEL`
+- `TENSORMESH_BASE_URL`
+- `TENSORMESH_USER_ID`
+
+The default models in `.env.local.example` use Devstral because it is the
+cleanest current baseline on the package `chat/completions` path.
+
+## Package Dependency
+
+This workspace version uses:
+
+```json
+"@tensormesh/ai-sdk-provider": "file:.."
+```
+
+After the npm package is published, replace that with the published version
+range before using this as a standalone template.
+
+## Capability Notes
+
+- Text generation and streaming are validated on the currently tested
+  serverless and on-demand models.
+- Structured output is model-dependent. `MiniMaxAI/MiniMax-M2.5` is intermittent
+  on the current serving path.
+- Tool calling is currently verified with
+  `mistralai/Devstral-2-123B-Instruct-2512`.
+- GPT OSS tool use belongs to `/v1/responses`, not this starter's
+  `chat/completions` path.

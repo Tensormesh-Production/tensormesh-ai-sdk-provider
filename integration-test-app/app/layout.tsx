@@ -3,8 +3,8 @@ import "./globals.css";
 import { Nav } from "../components/nav";
 
 export const metadata: Metadata = {
-  title: "Tensormesh AI SDK Integration App",
-  description: "Integration test app for @tensormesh/ai-sdk-provider",
+  title: "Tensormesh AI SDK Starter",
+  description: "Next.js starter for Tensormesh with the Vercel AI SDK",
 };
 
 export default function RootLayout({

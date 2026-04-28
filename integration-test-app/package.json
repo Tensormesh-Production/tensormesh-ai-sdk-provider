@@ -1,5 +1,5 @@
 {
-  "name": "tensormesh-ai-sdk-integration-app",
+  "name": "tensormesh-ai-sdk-starter",
   "private": true,
   "type": "module",
   "scripts": {
