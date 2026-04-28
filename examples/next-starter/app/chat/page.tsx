@@ -1,9 +1,9 @@
 import { ChatPageClient } from "../../components/chat-page-client";
 import { RuntimeSummary } from "../../components/runtime-summary";
-import { getIntegrationSummary } from "../../lib/tensormesh";
+import { getExampleSummary } from "../../lib/tensormesh";
 
 export default function ChatPage() {
-  const summary = getIntegrationSummary();
+  const summary = getExampleSummary();
 
   return (
     <main className="stack">

@@ -9,6 +9,20 @@ export { VERSION } from "./version.js";
 
 export type { TensormeshChatModelId } from "./tensormesh-chat-settings.js";
 export type {
+  TensormeshDetokenizeApi,
+  TensormeshDetokenizeResponse,
+  TensormeshHealthApi,
+  TensormeshHealthResponse,
+  TensormeshModel,
+  TensormeshModelList,
+  TensormeshModelsApi,
   TensormeshProvider,
   TensormeshProviderSettings,
+  TensormeshRequestBody,
+  TensormeshRequestOptions,
+  TensormeshResponsesApi,
+  TensormeshTokenizeApi,
+  TensormeshTokenizeResponse,
+  TensormeshVersionApi,
+  TensormeshVersionResponse,
 } from "./tensormesh-provider.js";

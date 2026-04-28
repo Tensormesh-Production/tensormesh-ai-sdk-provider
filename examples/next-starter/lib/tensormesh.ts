@@ -27,7 +27,7 @@ export function requiredEnv(name: string): string {
   const value = readEnv(name);
 
   if (!value) {
-    throw new Error(`Missing ${name}. Add it to integration-test-app/.env.local.`);
+    throw new Error(`Missing ${name}. Add it to examples/next-starter/.env.local.`);
   }
 
   return value;
@@ -45,7 +45,7 @@ export function getToolModelId() {
   return readEnv("TENSORMESH_TOOL_MODEL") ?? getChatModelId();
 }
 
-export function getIntegrationSummary() {
+export function getExampleSummary() {
   const baseURL =
     readEnv("TENSORMESH_BASE_URL") ?? DEFAULT_TENSORMESH_SERVERLESS_BASE_URL;
   const userId = readEnv("TENSORMESH_USER_ID");

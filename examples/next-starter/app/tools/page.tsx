@@ -1,9 +1,9 @@
 import { RuntimeSummary } from "../../components/runtime-summary";
 import { ToolsPageClient } from "../../components/tools-page-client";
-import { getIntegrationSummary } from "../../lib/tensormesh";
+import { getExampleSummary } from "../../lib/tensormesh";
 
 export default function ToolsPage() {
-  const summary = getIntegrationSummary();
+  const summary = getExampleSummary();
 
   return (
     <main className="stack">

@@ -263,6 +263,287 @@ test("chat models enable structured outputs", () => {
   );
 });
 
+test("completionModel uses the completions endpoint", async () => {
+  let capturedRequest;
+  const provider = createTensormesh({
+    apiKey: "tm-completion-key",
+    fetch: async (input, init) => {
+      capturedRequest = {
+        url: String(input),
+        method: init?.method,
+        headers: Object.fromEntries(new Headers(init?.headers).entries()),
+        body: JSON.parse(String(init?.body)),
+      };
+
+      return Response.json({
+        id: "cmpl-test",
+        object: "text_completion",
+        created: 1,
+        model: "openai/gpt-oss-20b",
+        choices: [
+          {
+            text: "Hello from a Tensormesh completion.",
+            index: 0,
+            finish_reason: "stop",
+          },
+        ],
+        usage: {
+          prompt_tokens: 6,
+          completion_tokens: 5,
+          total_tokens: 11,
+        },
+      });
+    },
+  });
+
+  const result = await generateText({
+    model: provider.completionModel("openai/gpt-oss-20b"),
+    prompt: "Say hello.",
+  });
+
+  assert.equal(result.text, "Hello from a Tensormesh completion.");
+  assert.equal(
+    provider.completionModel("openai/gpt-oss-20b").provider,
+    "tensormesh.completion",
+  );
+  assert.equal(
+    capturedRequest.url,
+    `${DEFAULT_TENSORMESH_SERVERLESS_BASE_URL}/completions`,
+  );
+  assert.equal(capturedRequest.method, "POST");
+  assert.equal(
+    capturedRequest.headers.authorization,
+    "Bearer tm-completion-key",
+  );
+  assert.equal(capturedRequest.body.model, "openai/gpt-oss-20b");
+});
+
+test("responses.create supports GPT OSS tool-calling payloads", async () => {
+  let capturedRequest;
+  const provider = createTensormesh({
+    apiKey: "tm-gpt-oss-key",
+    fetch: async (input, init) => {
+      capturedRequest = {
+        url: String(input),
+        method: init?.method,
+        headers: Object.fromEntries(new Headers(init?.headers).entries()),
+        body: JSON.parse(String(init?.body)),
+      };
+
+      return Response.json({
+        id: "resp-gpt-oss-tool",
+        object: "response",
+        model: "openai/gpt-oss-20b",
+        output: [
+          {
+            type: "function_call",
+            id: "fc_weather",
+            call_id: "call_weather",
+            name: "weather",
+            arguments: "{\"city\":\"Bangkok\"}",
+          },
+        ],
+      });
+    },
+  });
+
+  const weatherTool = {
+    type: "function",
+    name: "weather",
+    description: "Return the weather for a city.",
+    strict: true,
+    parameters: {
+      type: "object",
+      properties: {
+        city: {
+          type: "string",
+          description: "City name to look up",
+        },
+      },
+      required: ["city"],
+      additionalProperties: false,
+    },
+  };
+
+  const response = await provider.responses.create({
+    model: "openai/gpt-oss-20b",
+    input:
+      "What is the weather in Bangkok? Use the weather tool, then answer in one sentence.",
+    tools: [weatherTool],
+    tool_choice: "auto",
+  });
+
+  assert.equal(
+    capturedRequest.url,
+    `${DEFAULT_TENSORMESH_SERVERLESS_BASE_URL}/responses`,
+  );
+  assert.equal(capturedRequest.method, "POST");
+  assert.equal(
+    capturedRequest.headers.authorization,
+    "Bearer tm-gpt-oss-key",
+  );
+  assert.equal(capturedRequest.body.model, "openai/gpt-oss-20b");
+  assert.deepEqual(capturedRequest.body.tools, [weatherTool]);
+  assert.equal(capturedRequest.body.tool_choice, "auto");
+  assert.equal(response.output[0].type, "function_call");
+  assert.equal(response.output[0].name, "weather");
+  assert.equal(response.output[0].arguments, "{\"city\":\"Bangkok\"}");
+});
+
+test("raw inference helpers call the documented endpoint paths", async () => {
+  const requests = [];
+  const provider = createTensormesh({
+    baseURL: "https://example.tensormesh.ai/v1/",
+    apiKey: "tm-raw-key",
+    userId: "user-raw",
+    fetch: async (input, init) => {
+      const body = init?.body ? JSON.parse(String(init.body)) : undefined;
+      const request = {
+        url: String(input),
+        path: new URL(String(input)).pathname,
+        method: init?.method,
+        headers: Object.fromEntries(new Headers(init?.headers).entries()),
+        body,
+      };
+      requests.push(request);
+
+      switch (request.path) {
+        case "/v1/models":
+          return Response.json({
+            object: "list",
+            data: [{ id: "openai/gpt-oss-20b", object: "model" }],
+          });
+        case "/v1/responses":
+          if (request.body?.stream) {
+            return new Response("data: [DONE]\n\n", {
+              headers: { "content-type": "text/event-stream" },
+            });
+          }
+          return Response.json({
+            id: "resp-test",
+            output: [{ type: "message", content: [{ type: "output_text", text: "ok" }] }],
+          });
+        case "/tokenize":
+          return Response.json({ tokens: [1, 2, 3] });
+        case "/detokenize":
+          return Response.json({ prompt: "hello" });
+        case "/health":
+          return Response.json({ status: "ok" });
+        case "/version":
+          return Response.json({ version: "1.2.3" });
+        default:
+          return Response.json({ error: "unexpected path" }, { status: 404 });
+      }
+    },
+  });
+
+  const models = await provider.models.list();
+  const response = await provider.responses.create({
+    model: "openai/gpt-oss-20b",
+    input: "Say hello.",
+  });
+  const responseStream = await provider.responses.stream({
+    model: "openai/gpt-oss-20b",
+    input: "Stream hello.",
+  });
+  const tokens = await provider.tokenize.create({
+    model: "openai/gpt-oss-20b",
+    prompt: "Hello!",
+  });
+  const text = await provider.detokenize.create({
+    model: "openai/gpt-oss-20b",
+    tokens: [1, 2, 3],
+  });
+  const health = await provider.health.get();
+  const version = await provider.version.get();
+
+  assert.equal(models.data[0].id, "openai/gpt-oss-20b");
+  assert.equal(response.id, "resp-test");
+  assert.equal(await responseStream.text(), "data: [DONE]\n\n");
+  assert.deepEqual(tokens.tokens, [1, 2, 3]);
+  assert.equal(text.prompt, "hello");
+  assert.equal(health.status, "ok");
+  assert.equal(version.version, "1.2.3");
+
+  assert.deepEqual(
+    requests.map((request) => [
+      requestLabel(request),
+      request.method,
+      request.url,
+    ]),
+    [
+      ["models.list", "GET", "https://example.tensormesh.ai/v1/models"],
+      [
+        "responses.create",
+        "POST",
+        "https://example.tensormesh.ai/v1/responses",
+      ],
+      [
+        "responses.stream",
+        "POST",
+        "https://example.tensormesh.ai/v1/responses",
+      ],
+      ["tokenize.create", "POST", "https://example.tensormesh.ai/tokenize"],
+      [
+        "detokenize.create",
+        "POST",
+        "https://example.tensormesh.ai/detokenize",
+      ],
+      ["health.get", "GET", "https://example.tensormesh.ai/health"],
+      ["version.get", "GET", "https://example.tensormesh.ai/version"],
+    ],
+  );
+  assert.equal(requests[0].headers.authorization, "Bearer tm-raw-key");
+  assert.equal(requests[0].headers["x-user-id"], "user-raw");
+  assert.equal(requests[1].body.stream, undefined);
+  assert.equal(requests[2].body.stream, true);
+});
+
+test("public raw GET helpers do not require an API key", async () => {
+  const previousApiKey = process.env[TENSORMESH_INFERENCE_API_KEY_ENV_NAME];
+  delete process.env[TENSORMESH_INFERENCE_API_KEY_ENV_NAME];
+
+  try {
+    const requests = [];
+    const provider = createTensormesh({
+      fetch: async (input, init) => {
+        requests.push({
+          url: String(input),
+          headers: Object.fromEntries(new Headers(init?.headers).entries()),
+        });
+
+        return Response.json(
+          String(input).endsWith("/models")
+            ? { object: "list", data: [] }
+            : String(input).endsWith("/health")
+              ? { status: "ok" }
+              : { version: "1.2.3" },
+        );
+      },
+    });
+
+    await provider.models.list();
+    await provider.health.get();
+    await provider.version.get();
+
+    assert.equal(
+      requests[0].url,
+      `${DEFAULT_TENSORMESH_SERVERLESS_BASE_URL}/models`,
+    );
+    assert.equal(requests[1].url, "https://serverless.tensormesh.ai/health");
+    assert.equal(requests[2].url, "https://serverless.tensormesh.ai/version");
+    assert.equal(requests[0].headers.authorization, undefined);
+    assert.equal(requests[1].headers.authorization, undefined);
+    assert.equal(requests[2].headers.authorization, undefined);
+  } finally {
+    if (previousApiKey === undefined) {
+      delete process.env[TENSORMESH_INFERENCE_API_KEY_ENV_NAME];
+    } else {
+      process.env[TENSORMESH_INFERENCE_API_KEY_ENV_NAME] = previousApiKey;
+    }
+  }
+});
+
 function createEventStream(chunks) {
   const encoder = new TextEncoder();
 
@@ -274,4 +555,23 @@ function createEventStream(chunks) {
       controller.close();
     },
   });
+}
+
+function requestLabel(request) {
+  switch (request.path) {
+    case "/v1/models":
+      return "models.list";
+    case "/v1/responses":
+      return request.body?.stream ? "responses.stream" : "responses.create";
+    case "/tokenize":
+      return "tokenize.create";
+    case "/detokenize":
+      return "detokenize.create";
+    case "/health":
+      return "health.get";
+    case "/version":
+      return "version.get";
+    default:
+      return request.path;
+  }
 }

@@ -93,6 +93,20 @@ for await (const chunk of result.textStream) {
 process.stdout.write("\n");
 ```
 
+### Completion Model Example
+
+```ts
+import { generateText } from "ai";
+import { tensormesh } from "@tensormesh/ai-sdk-provider";
+
+const { text } = await generateText({
+  model: tensormesh.completionModel("openai/gpt-oss-20b"),
+  prompt: "Complete this sentence: Tensormesh is",
+});
+
+console.log(text);
+```
+
 ### On-Demand Example
 
 ```ts
@@ -123,14 +137,58 @@ curl https://serverless.tensormesh.ai/v1/models \
 
 For on-demand, use the served gateway model name exposed by your deployment.
 
+## Raw Inference Helpers
+
+The provider also exposes small raw helpers for the current Tensormesh inference routes that do not map directly to the Vercel AI SDK provider abstraction:
+
+```ts
+import { tensormesh } from "@tensormesh/ai-sdk-provider";
+
+const models = await tensormesh.models.list();
+
+const response = await tensormesh.responses.create({
+  model: "openai/gpt-oss-20b",
+  input: "Say hello.",
+});
+
+const tokens = await tensormesh.tokenize.create({
+  model: "openai/gpt-oss-20b",
+  prompt: "Hello!",
+});
+
+const prompt = await tensormesh.detokenize.create({
+  model: "openai/gpt-oss-20b",
+  tokens: tokens.tokens,
+});
+
+const health = await tensormesh.health.get();
+const version = await tensormesh.version.get();
+```
+
+Available helpers:
+
+- `models.list()` calls `GET /v1/models`
+- `responses.create(...)` and `responses.stream(...)` call `POST /v1/responses`
+- `tokenize.create(...)` calls `POST /tokenize`
+- `detokenize.create(...)` calls `POST /detokenize`
+- `health.get()` calls `GET /health`
+- `version.get()` calls `GET /version`
+
 ## Model Capabilities
 
-- The same package supports both serverless and on-demand on the `chat/completions` path. On-demand only adds `baseURL` and `userId`.
+- The same package supports both serverless and on-demand inference. On-demand only adds `baseURL` and `userId`.
 - Text generation and streaming are validated on the currently tested serverless and on-demand models.
-- Structured outputs are enabled in the provider and currently work on most tested models. `MiniMaxAI/MiniMax-M2.5` is intermittent on the current serving path.
-- Tool calling is currently verified with `mistralai/Devstral-2-123B-Instruct-2512`. Tested Qwen variants need serving-side tool parser support, `MiniMaxAI/MiniMax-M2.5` is not cleanly parsed on the current tool path, and GPT OSS tool use belongs to `/v1/responses` rather than this package's `chat/completions` path.
+- Structured outputs are enabled in the provider and currently work on most tested models except `MiniMaxAI/MiniMax-M2.5`.
+- AI SDK tool calling through `/v1/chat/completions` is currently verified with `mistralai/Devstral-2-123B-Instruct-2512`. Tested GPT OSS models and `MiniMaxAI/MiniMax-M2.5` do not error on this path, but they currently do not emit structured tool calls.
+- Raw Responses API tool calling through `/v1/responses` is currently verified with `mistralai/Devstral-2-123B-Instruct-2512`, GPT OSS models, and `MiniMaxAI/MiniMax-M2.5`. Function tools should include a boolean `strict` field.
+- Tested Qwen variants currently emit tool-call-shaped text instead of structured tool calls, so they need serving-side parser support.
+- Embeddings, images, audio, and Control Plane APIs are intentionally not part of this package.
 - The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` because it is a clean validated baseline on the current Tensormesh `chat/completions` path.
 - Serving-side updates may expand or change model-specific capability without any package change.
+
+## Example App
+
+See `examples/next-starter` for a small Next.js starter that uses chat, structured output, and tool calling with this provider.
 
 ## Documentation
 

@@ -11,11 +11,11 @@ It includes:
 
 ## Deploy To Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider&project-name=tensormesh-ai-sdk-starter&repository-name=tensormesh-ai-sdk-starter&root-directory=integration-test-app&env=TENSORMESH_INFERENCE_API_KEY,TENSORMESH_CHAT_MODEL,TENSORMESH_STRUCTURED_MODEL,TENSORMESH_TOOL_MODEL&envDescription=TensorMesh%20API%20key%20and%20model%20names%20for%20the%20starter&envLink=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider%2Ftree%2Fmain%2Fintegration-test-app%23environment-variables)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider&project-name=tensormesh-ai-sdk-starter&repository-name=tensormesh-ai-sdk-starter&root-directory=examples%2Fnext-starter&env=TENSORMESH_INFERENCE_API_KEY,TENSORMESH_CHAT_MODEL,TENSORMESH_STRUCTURED_MODEL,TENSORMESH_TOOL_MODEL&envDescription=TensorMesh%20API%20key%20and%20model%20names%20for%20the%20starter&envLink=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider%2Ftree%2Fmain%2Fexamples%2Fnext-starter%23environment-variables)
 
-The deploy button assumes this repository is public and uses `integration-test-app`
+The deploy button assumes this repository is public and uses `examples/next-starter`
 as the Vercel root directory. Until `@tensormesh/ai-sdk-provider` is published,
-this starter intentionally depends on the local package with `file:..`.
+this starter intentionally depends on the local package with `file:../..`.
 
 ## Local Setup
 
@@ -61,7 +61,7 @@ cleanest current baseline on the package `chat/completions` path.
 This workspace version uses:
 
 ```json
-"@tensormesh/ai-sdk-provider": "file:.."
+"@tensormesh/ai-sdk-provider": "file:../.."
 ```
 
 After the npm package is published, replace that with the published version

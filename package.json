@@ -48,6 +48,7 @@
     "test:serverless": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/serverless.mjs",
     "test:on-demand": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/on-demand.mjs",
     "test:tool-calling": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/tool-calling.mjs",
+    "test:responses-tool-calling": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/responses-tool-calling.mjs",
     "test:structured-output": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/structured-output.mjs"
   },
   "keywords": [
