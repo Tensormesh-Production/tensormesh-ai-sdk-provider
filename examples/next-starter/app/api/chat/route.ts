@@ -4,16 +4,23 @@ import {
   streamText,
   type UIMessage,
 } from "ai";
-import { getChatModelId, getTensormeshProvider } from "../../../lib/tensormesh";
+import { getTensormeshProvider, resolveModelId } from "../../../lib/tensormesh";
 
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
-  const { messages }: { messages: UIMessage[] } = await req.json();
+  const {
+    messages,
+    modelId,
+  }: {
+    messages: UIMessage[];
+    modelId?: unknown;
+  } = await req.json();
   const provider = getTensormeshProvider();
+  const selectedModelId = await resolveModelId(modelId, "chat");
 
   const result = streamText({
-    model: provider(getChatModelId()),
+    model: provider(selectedModelId),
     messages: await convertToModelMessages(messages),
     abortSignal: req.signal,
   });

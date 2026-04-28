@@ -7,6 +7,7 @@ It includes:
 - Streaming chat with `useChat` and `streamText()`
 - Structured output with `experimental_useObject` and `Output.object(...)`
 - Server-side tool calling with `streamText()` and `tool(...)`
+- Runtime model selection backed by the Tensormesh models endpoint
 - Serverless by default, with optional on-demand settings
 
 ## Deploy To Vercel
@@ -44,7 +45,7 @@ Then open `http://localhost:3000`.
 Required:
 
 - `TENSORMESH_INFERENCE_API_KEY`
-- `TENSORMESH_CHAT_MODEL`
+- `TENSORMESH_CHAT_MODEL` as the default selected model
 
 Optional:
 
@@ -55,6 +56,14 @@ Optional:
 
 The default models in `.env.local.example` use Devstral because it is the
 cleanest current baseline on the package `chat/completions` path.
+The app also loads available models from `GET /v1/models` and lets you switch
+models from each demo page.
+
+For on-demand deployments, use the served gateway model name exposed by your
+deployment. Tensormesh can also serve compatible Hugging Face models when they
+are supported by the underlying serving stack, including vLLM and LMCache. The
+public on-demand compatibility list is not published yet, so use your deployment
+configuration as the source of truth for now.
 
 ## Package Dependency
 

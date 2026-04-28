@@ -8,7 +8,7 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { getTensormeshProvider, getToolModelId } from "../../../lib/tensormesh";
+import { getTensormeshProvider, resolveModelId } from "../../../lib/tensormesh";
 
 export const maxDuration = 30;
 
@@ -35,11 +35,18 @@ export type UseChatToolsMessage = UIMessage<
 >;
 
 export async function POST(req: Request) {
-  const { messages }: { messages: UseChatToolsMessage[] } = await req.json();
+  const {
+    messages,
+    modelId,
+  }: {
+    messages: UseChatToolsMessage[];
+    modelId?: unknown;
+  } = await req.json();
   const provider = getTensormeshProvider();
+  const selectedModelId = await resolveModelId(modelId, "tool");
 
   const result = streamText({
-    model: provider(getToolModelId()),
+    model: provider(selectedModelId),
     messages: await convertToModelMessages(messages),
     tools,
     prepareStep: async ({ stepNumber }) => {

@@ -109,7 +109,10 @@ pre {
 
 .panel-toolbar {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
 }
 
@@ -174,6 +177,29 @@ pre {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--muted);
+}
+
+.model-select {
+  display: grid;
+  gap: 6px;
+  flex: 1 1 360px;
+  max-width: 560px;
+}
+
+.model-select select {
+  min-height: 42px;
+  width: 100%;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fffefb;
+  color: var(--ink);
+  font: inherit;
+}
+
+.model-select-status {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .chat-input-row {

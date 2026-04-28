@@ -20,7 +20,7 @@ export default function ChatPage() {
         />
       </section>
 
-      <ChatPageClient />
+      <ChatPageClient defaultModelId={summary.defaults.chat} />
     </main>
   );
 }

@@ -20,7 +20,7 @@ export default function ToolsPage() {
         />
       </section>
 
-      <ToolsPageClient />
+      <ToolsPageClient defaultModelId={summary.defaults.tool} />
     </main>
   );
 }

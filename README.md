@@ -136,6 +136,11 @@ curl https://serverless.tensormesh.ai/v1/models \
 ```
 
 For on-demand, use the served gateway model name exposed by your deployment.
+In addition to the serverless model set, Tensormesh can serve compatible
+Hugging Face models when they are supported by the underlying serving stack,
+including vLLM and LMCache. The public on-demand compatibility list is not
+published yet, so use your deployment configuration as the source of truth for
+now.
 
 ## Raw Inference Helpers
 
@@ -188,7 +193,7 @@ Available helpers:
 
 ## Example App
 
-See `examples/next-starter` for a small Next.js starter that uses chat, structured output, and tool calling with this provider.
+See `examples/next-starter` for a small Next.js starter that uses chat, structured output, tool calling, and model selection with this provider.
 
 ## Documentation
 

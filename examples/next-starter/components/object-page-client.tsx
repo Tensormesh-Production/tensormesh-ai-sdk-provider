@@ -1,9 +1,16 @@
 "use client";
 
 import { experimental_useObject as useObject } from "@ai-sdk/react";
+import { useState } from "react";
 import { ideaSchema } from "../app/api/object/schema";
+import { ModelSelect } from "./model-select";
 
-export function ObjectPageClient() {
+type ObjectPageClientProps = {
+  defaultModelId: string;
+};
+
+export function ObjectPageClient({ defaultModelId }: ObjectPageClientProps) {
+  const [modelId, setModelId] = useState(defaultModelId);
   const { submit, isLoading, object, stop, error, clear } = useObject({
     api: "/api/object",
     schema: ideaSchema,
@@ -13,13 +20,24 @@ export function ObjectPageClient() {
     <>
       <section className="panel">
         <div className="panel-toolbar">
+          <ModelSelect
+            value={modelId}
+            fallbackModelId={defaultModelId}
+            disabled={isLoading}
+            onChange={setModelId}
+          />
           <span className="status-badge">{isLoading ? "streaming" : "ready"}</span>
         </div>
         <div className="chat-input-row">
           <button
             className="button"
-            onClick={() => submit("Create a launch idea for a GPU inference startup.")}
-            disabled={isLoading}
+            onClick={() =>
+              submit({
+                context: "Create a launch idea for a GPU inference startup.",
+                modelId,
+              })
+            }
+            disabled={isLoading || !modelId}
           >
             Generate object
           </button>

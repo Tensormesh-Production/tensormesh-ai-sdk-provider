@@ -20,7 +20,7 @@ export default function ObjectPage() {
         />
       </section>
 
-      <ObjectPageClient />
+      <ObjectPageClient defaultModelId={summary.defaults.structured} />
     </main>
   );
 }

@@ -499,6 +499,131 @@ test("raw inference helpers call the documented endpoint paths", async () => {
   assert.equal(requests[2].body.stream, true);
 });
 
+test("models.list returns models from /v1/models", async () => {
+  const { provider, getRequest } = createRawEndpointTestProvider(() =>
+    Response.json({
+      object: "list",
+      data: [
+        {
+          id: "mistralai/Devstral-2-123B-Instruct-2512",
+          object: "model",
+        },
+      ],
+    }),
+  );
+
+  const models = await provider.models.list({
+    headers: {
+      "X-Test-Case": "models",
+    },
+  });
+  const request = getRequest();
+
+  assert.equal(request.url, "https://raw.tensormesh.ai/v1/models");
+  assert.equal(request.method, "GET");
+  assert.equal(request.body, undefined);
+  assert.equal(request.headers.authorization, "Bearer tm-endpoint-key");
+  assert.equal(request.headers["x-test-case"], "models");
+  assert.equal(
+    models.data[0].id,
+    "mistralai/Devstral-2-123B-Instruct-2512",
+  );
+});
+
+test("responses.stream sends a streaming request to /v1/responses", async () => {
+  const { provider, getRequest } = createRawEndpointTestProvider(
+    () =>
+      new Response("data: [DONE]\n\n", {
+        headers: { "content-type": "text/event-stream" },
+      }),
+  );
+
+  const response = await provider.responses.stream({
+    model: "openai/gpt-oss-20b",
+    input: "Stream this.",
+  });
+  const request = getRequest();
+
+  assert.equal(request.url, "https://raw.tensormesh.ai/v1/responses");
+  assert.equal(request.method, "POST");
+  assert.equal(request.headers.accept, "text/event-stream");
+  assert.equal(request.headers["content-type"], "application/json");
+  assert.deepEqual(request.body, {
+    model: "openai/gpt-oss-20b",
+    input: "Stream this.",
+    stream: true,
+  });
+  assert.equal(await response.text(), "data: [DONE]\n\n");
+});
+
+test("tokenize.create calls /tokenize at the root API URL", async () => {
+  const { provider, getRequest } = createRawEndpointTestProvider(() =>
+    Response.json({ tokens: [101, 102, 103] }),
+  );
+
+  const result = await provider.tokenize.create({
+    model: "openai/gpt-oss-20b",
+    prompt: "Hello!",
+  });
+  const request = getRequest();
+
+  assert.equal(request.url, "https://raw.tensormesh.ai/tokenize");
+  assert.equal(request.method, "POST");
+  assert.deepEqual(request.body, {
+    model: "openai/gpt-oss-20b",
+    prompt: "Hello!",
+  });
+  assert.deepEqual(result.tokens, [101, 102, 103]);
+});
+
+test("detokenize.create calls /detokenize at the root API URL", async () => {
+  const { provider, getRequest } = createRawEndpointTestProvider(() =>
+    Response.json({ prompt: "Hello!" }),
+  );
+
+  const result = await provider.detokenize.create({
+    model: "openai/gpt-oss-20b",
+    tokens: [101, 102, 103],
+  });
+  const request = getRequest();
+
+  assert.equal(request.url, "https://raw.tensormesh.ai/detokenize");
+  assert.equal(request.method, "POST");
+  assert.deepEqual(request.body, {
+    model: "openai/gpt-oss-20b",
+    tokens: [101, 102, 103],
+  });
+  assert.equal(result.prompt, "Hello!");
+});
+
+test("health.get calls /health at the root API URL", async () => {
+  const { provider, getRequest } = createRawEndpointTestProvider(() =>
+    Response.json({ status: "ok" }),
+  );
+
+  const result = await provider.health.get();
+  const request = getRequest();
+
+  assert.equal(request.url, "https://raw.tensormesh.ai/health");
+  assert.equal(request.method, "GET");
+  assert.equal(request.body, undefined);
+  assert.equal(result.status, "ok");
+});
+
+test("version.get calls /version at the root API URL", async () => {
+  const { provider, getRequest } = createRawEndpointTestProvider(() =>
+    Response.json({ version: "1.2.3" }),
+  );
+
+  const result = await provider.version.get();
+  const request = getRequest();
+
+  assert.equal(request.url, "https://raw.tensormesh.ai/version");
+  assert.equal(request.method, "GET");
+  assert.equal(request.body, undefined);
+  assert.equal(result.version, "1.2.3");
+});
+
 test("public raw GET helpers do not require an API key", async () => {
   const previousApiKey = process.env[TENSORMESH_INFERENCE_API_KEY_ENV_NAME];
   delete process.env[TENSORMESH_INFERENCE_API_KEY_ENV_NAME];
@@ -555,6 +680,31 @@ function createEventStream(chunks) {
       controller.close();
     },
   });
+}
+
+function createRawEndpointTestProvider(createResponse) {
+  let capturedRequest;
+  const provider = createTensormesh({
+    baseURL: "https://raw.tensormesh.ai/v1",
+    apiKey: "tm-endpoint-key",
+    fetch: async (input, init) => {
+      capturedRequest = {
+        url: String(input),
+        method: init?.method,
+        headers: Object.fromEntries(new Headers(init?.headers).entries()),
+        body: init?.body ? JSON.parse(String(init.body)) : undefined,
+      };
+
+      return createResponse(capturedRequest);
+    },
+  });
+
+  return {
+    provider,
+    getRequest() {
+      return capturedRequest;
+    },
+  };
 }
 
 function requestLabel(request) {

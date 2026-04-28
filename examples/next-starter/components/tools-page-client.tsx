@@ -2,10 +2,17 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
+import { useState } from "react";
 import type { UseChatToolsMessage } from "../app/api/tools/route";
 import { ChatInput } from "./chat-input";
+import { ModelSelect } from "./model-select";
 
-export function ToolsPageClient() {
+type ToolsPageClientProps = {
+  defaultModelId: string;
+};
+
+export function ToolsPageClient({ defaultModelId }: ToolsPageClientProps) {
+  const [modelId, setModelId] = useState(defaultModelId);
   const { messages, sendMessage, status, stop, error } = useChat<UseChatToolsMessage>({
     transport: new DefaultChatTransport({ api: "/api/tools" }),
   });
@@ -13,6 +20,12 @@ export function ToolsPageClient() {
   return (
     <section className="panel messages">
       <div className="panel-toolbar">
+        <ModelSelect
+          value={modelId}
+          fallbackModelId={defaultModelId}
+          disabled={status !== "ready"}
+          onChange={setModelId}
+        />
         <span className="status-badge">{status}</span>
       </div>
 
@@ -79,7 +92,8 @@ export function ToolsPageClient() {
 
       <ChatInput
         status={status}
-        onSubmit={(text) => sendMessage({ text })}
+        disabled={!modelId}
+        onSubmit={(text) => sendMessage({ text }, { body: { modelId } })}
         stop={stop}
       />
     </section>

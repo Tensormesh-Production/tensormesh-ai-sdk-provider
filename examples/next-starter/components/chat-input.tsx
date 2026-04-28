@@ -6,10 +6,12 @@ type ChatInputProps = {
   status: string;
   onSubmit: (text: string) => void;
   stop?: () => void;
+  disabled?: boolean;
 };
 
-export function ChatInput({ status, onSubmit, stop }: ChatInputProps) {
+export function ChatInput({ status, onSubmit, stop, disabled }: ChatInputProps) {
   const [text, setText] = useState("");
+  const inputDisabled = disabled || status !== "ready";
 
   return (
     <form
@@ -30,9 +32,9 @@ export function ChatInput({ status, onSubmit, stop }: ChatInputProps) {
         placeholder="Say something..."
         value={text}
         onChange={(event) => setText(event.target.value)}
-        disabled={status !== "ready"}
+        disabled={inputDisabled}
       />
-      <button className="button" type="submit" disabled={status !== "ready"}>
+      <button className="button" type="submit" disabled={inputDisabled}>
         Send
       </button>
       {stop && (status === "submitted" || status === "streaming") ? (
