@@ -182,9 +182,10 @@ Available helpers:
 ## Model Capabilities
 
 - The same package supports both serverless and on-demand inference. On-demand only adds `baseURL` and `userId`.
-- Text generation, streaming, and structured outputs are validated on the current eight serverless models.
-- AI SDK tool calling through `/v1/chat/completions` is validated on the current serverless models except GPT OSS models. GPT OSS models currently return reasoning text on this path instead of structured tool calls.
-- Raw Responses API tool calling through `/v1/responses` is validated on the current eight serverless models, including GPT OSS models. Function tools should include a boolean `strict` field.
+- Text generation, streaming, structured outputs, and tool calling are validated on the current eight serverless models.
+- AI SDK tool calling through `/v1/chat/completions` and raw Responses API tool calling through `/v1/responses` are validated on the current eight serverless models.
+- Responses API function tools should include a boolean `strict` field.
+- GPT OSS tool-calling requests should use `tool_choice: "auto"`; other tested models can use `tool_choice: "required"` when you need to force a tool call.
 - Embeddings, images, audio, and Control Plane APIs are intentionally not part of this package.
 - The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` because it is a clean validated baseline on the Tensormesh `chat/completions` path.
 - Serving-side updates may expand or change model-specific capability without any package change.

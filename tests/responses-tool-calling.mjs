@@ -1,5 +1,6 @@
 import { createLiveTestContext } from "./live-common.mjs";
 import {
+  getToolChoiceForModel,
   weatherCityDescription,
   weatherPrompt,
   weatherToolDescription,
@@ -7,6 +8,7 @@ import {
 } from "./tool-calling-example.mjs";
 
 const { modelId, provider, summary } = createLiveTestContext();
+const toolChoice = getToolChoiceForModel(modelId);
 
 const weatherTool = {
   type: "function",
@@ -40,7 +42,7 @@ const response = await provider.responses.create({
   model: modelId,
   input: weatherPrompt,
   tools: [weatherTool],
-  tool_choice: "required",
+  tool_choice: toolChoice,
 });
 
 const output = Array.isArray(response?.output) ? response.output : [];
@@ -52,6 +54,7 @@ console.log(
     {
       id: response?.id,
       model: response?.model,
+      toolChoice,
       toolCalls,
       output,
     },

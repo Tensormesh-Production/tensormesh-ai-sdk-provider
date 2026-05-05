@@ -82,7 +82,6 @@ range before using this as a standalone template.
   serverless and on-demand models.
 - Structured output is validated on the current eight serverless models.
 - Tool calling through the starter's `chat/completions` path is validated on
-  the current serverless models except GPT OSS models.
-- GPT OSS tool use currently belongs to `/v1/responses`; on the
-  `chat/completions` path these models return reasoning text instead of
-  structured tool calls.
+  the current eight serverless models.
+- GPT OSS models only support `auto` tool choice. The starter uses `auto` for
+  GPT OSS selections and `required` for other models.

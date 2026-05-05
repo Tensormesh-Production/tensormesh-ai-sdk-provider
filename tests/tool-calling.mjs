@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createLiveTestContext } from "./live-common.mjs";
 import {
   createWeatherToolResult,
+  getToolChoiceForModel,
   weatherCityDescription,
   weatherPrompt,
   weatherToolDescription,
@@ -12,6 +13,7 @@ import {
 // This test uses the package exactly as an app would, with either the default
 // serverless provider or a custom on-demand provider from env.
 const { modelId, provider, summary } = createLiveTestContext();
+const toolChoice = getToolChoiceForModel(modelId);
 
 const weatherTool = tool({
   description: weatherToolDescription,
@@ -37,10 +39,10 @@ const result = await generateText({
   tools: {
     [weatherToolName]: weatherTool,
   },
-  // Force the first step to exercise tool calling before the model answers.
+  // GPT OSS models only accept auto; other models use required to force the call.
   prepareStep: async ({ stepNumber }) => {
     if (stepNumber === 0) {
-      return { toolChoice: "required" };
+      return { toolChoice };
     }
 
     return {};
@@ -58,6 +60,7 @@ console.log(
   JSON.stringify(
     {
       stepCount: result.steps.length,
+      toolChoice,
       toolCalls,
       finishReason: result.finishReason,
       usage: result.usage,

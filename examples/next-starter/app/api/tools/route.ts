@@ -44,15 +44,16 @@ export async function POST(req: Request) {
   } = await req.json();
   const provider = getTensormeshProvider();
   const selectedModelId = await resolveModelId(modelId, "tool");
+  const toolChoice = getToolChoiceForModel(selectedModelId);
 
   const result = streamText({
     model: provider(selectedModelId),
     messages: await convertToModelMessages(messages),
     tools,
-    // Force the first step to call the tool, then allow the model to answer.
+    // GPT OSS models only accept auto; other models use required to force the call.
     prepareStep: async ({ stepNumber }) => {
       if (stepNumber === 0) {
-        return { toolChoice: "required" };
+        return { toolChoice };
       }
 
       return {};
@@ -62,4 +63,8 @@ export async function POST(req: Request) {
   });
 
   return result.toUIMessageStreamResponse();
+}
+
+function getToolChoiceForModel(modelId: string) {
+  return modelId.toLowerCase().includes("gpt-oss") ? "auto" : "required";
 }
