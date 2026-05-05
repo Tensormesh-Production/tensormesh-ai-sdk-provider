@@ -370,7 +370,7 @@ test("responses.create supports GPT OSS tool-calling payloads", async () => {
     input:
       "What is the weather in Bangkok? Use the weather tool, then answer in one sentence.",
     tools: [weatherTool],
-    tool_choice: "auto",
+    tool_choice: "required",
   });
 
   assert.equal(
@@ -384,7 +384,7 @@ test("responses.create supports GPT OSS tool-calling payloads", async () => {
   );
   assert.equal(capturedRequest.body.model, "openai/gpt-oss-20b");
   assert.deepEqual(capturedRequest.body.tools, [weatherTool]);
-  assert.equal(capturedRequest.body.tool_choice, "auto");
+  assert.equal(capturedRequest.body.tool_choice, "required");
   assert.equal(response.output[0].type, "function_call");
   assert.equal(response.output[0].name, "weather");
   assert.equal(response.output[0].arguments, "{\"city\":\"Bangkok\"}");

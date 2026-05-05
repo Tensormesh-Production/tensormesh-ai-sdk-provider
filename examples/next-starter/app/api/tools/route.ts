@@ -15,7 +15,7 @@ export const maxDuration = 30;
 const weatherTool = tool({
   description: "Return the weather for a city.",
   inputSchema: z.object({
-    city: z.string(),
+    city: z.string().describe("City name to look up"),
   }),
   execute: async ({ city }) => ({
     city,
@@ -49,6 +49,7 @@ export async function POST(req: Request) {
     model: provider(selectedModelId),
     messages: await convertToModelMessages(messages),
     tools,
+    // Force the first step to call the tool, then allow the model to answer.
     prepareStep: async ({ stepNumber }) => {
       if (stepNumber === 0) {
         return { toolChoice: "required" };

@@ -80,9 +80,9 @@ range before using this as a standalone template.
 
 - Text generation and streaming are validated on the currently tested
   serverless and on-demand models.
-- Structured output is model-dependent. `MiniMaxAI/MiniMax-M2.5` is intermittent
-  on the current serving path.
-- Tool calling is currently verified with
-  `mistralai/Devstral-2-123B-Instruct-2512`.
-- GPT OSS tool use belongs to `/v1/responses`, not this starter's
-  `chat/completions` path.
+- Structured output is validated on the current eight serverless models.
+- Tool calling through the starter's `chat/completions` path is validated on
+  the current serverless models except GPT OSS models.
+- GPT OSS tool use currently belongs to `/v1/responses`; on the
+  `chat/completions` path these models return reasoning text instead of
+  structured tool calls.

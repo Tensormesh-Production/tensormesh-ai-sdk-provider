@@ -88,6 +88,7 @@ export function ModelSelect({
       <span className="summary-label">Model</span>
       <select
         value={value}
+        title={value || fallbackModelId}
         disabled={disabled || options.length === 0}
         onChange={(event) => onChange(event.target.value)}
       >

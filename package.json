@@ -49,7 +49,12 @@
     "test:on-demand": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/on-demand.mjs",
     "test:tool-calling": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/tool-calling.mjs",
     "test:responses-tool-calling": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/responses-tool-calling.mjs",
-    "test:raw-endpoints": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/raw-endpoints.mjs",
+    "test:models": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/models.mjs",
+    "test:tokenize": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/tokenize.mjs",
+    "test:detokenize": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/detokenize.mjs",
+    "test:health": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/health.mjs",
+    "test:version": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/version.mjs",
+    "test:raw-endpoints": "npm run test:models && npm run test:tokenize && npm run test:detokenize && npm run test:health && npm run test:version",
     "test:structured-output": "npm run build && node --env-file-if-exists=.env --env-file-if-exists=.env.local tests/structured-output.mjs"
   },
   "keywords": [

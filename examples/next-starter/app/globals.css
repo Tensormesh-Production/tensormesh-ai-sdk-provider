@@ -59,6 +59,7 @@ pre {
   background: rgba(255, 253, 247, 0.92);
   backdrop-filter: blur(8px);
   border-radius: 20px;
+  min-width: 0;
   padding: 24px;
 }
 
@@ -105,6 +106,7 @@ pre {
   border-radius: 16px;
   padding: 14px 16px;
   background: #fffefb;
+  min-width: 0;
 }
 
 .panel-toolbar {
@@ -166,6 +168,7 @@ pre {
   border: 1px solid var(--line);
   border-radius: 14px;
   background: #fffefb;
+  min-width: 0;
 }
 
 .summary-item-wide {
@@ -179,15 +182,24 @@ pre {
   color: var(--muted);
 }
 
+.summary-code-compact {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .model-select {
   display: grid;
   gap: 6px;
   flex: 1 1 360px;
   max-width: 560px;
+  min-width: 0;
 }
 
 .model-select select {
   min-height: 42px;
+  min-width: 0;
   width: 100%;
   padding: 0 12px;
   border: 1px solid var(--line);
@@ -195,6 +207,9 @@ pre {
   background: #fffefb;
   color: var(--ink);
   font: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .model-select-status {
@@ -239,11 +254,16 @@ pre {
 }
 
 .mono-block {
-  overflow: auto;
+  max-width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
   padding: 14px;
   border-radius: 14px;
   border: 1px solid var(--line);
   background: #fbf8f1;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .alert,

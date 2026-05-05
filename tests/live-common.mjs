@@ -13,14 +13,13 @@ export function requiredEnv(name) {
   return value;
 }
 
-export function createLiveTestContext() {
-  const modelId = requiredEnv("TENSORMESH_MODEL");
+export function createLiveProviderContext() {
   const baseURL = optionalEnv("TENSORMESH_BASE_URL");
   const userId = optionalEnv("TENSORMESH_USER_ID");
+  const modelId = optionalEnv("TENSORMESH_MODEL");
 
   if (baseURL) {
     return {
-      modelId,
       provider: createTensormesh({
         baseURL,
         ...(userId ? { userId } : {}),
@@ -36,7 +35,6 @@ export function createLiveTestContext() {
   }
 
   return {
-    modelId,
     provider: tensormesh,
     summary: {
       mode: "serverless",
@@ -44,6 +42,20 @@ export function createLiveTestContext() {
       model: modelId,
       userIdPresent: Boolean(userId),
       apiKeyPresent: Boolean(process.env.TENSORMESH_INFERENCE_API_KEY),
+    },
+  };
+}
+
+export function createLiveTestContext() {
+  const modelId = requiredEnv("TENSORMESH_MODEL");
+  const context = createLiveProviderContext();
+
+  return {
+    ...context,
+    modelId,
+    summary: {
+      ...context.summary,
+      model: modelId,
     },
   };
 }

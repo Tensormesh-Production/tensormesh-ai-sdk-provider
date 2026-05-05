@@ -19,7 +19,9 @@ export function RuntimeSummary({
       </div>
       <div className="summary-item">
         <span className="summary-label">Model</span>
-        <code>{model}</code>
+        <code className="summary-code-compact" title={model}>
+          {model}
+        </code>
       </div>
       <div className="summary-item summary-item-wide">
         <span className="summary-label">Base URL</span>

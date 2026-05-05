@@ -1,18 +1,24 @@
 import { createLiveTestContext } from "./live-common.mjs";
+import {
+  weatherCityDescription,
+  weatherPrompt,
+  weatherToolDescription,
+  weatherToolName,
+} from "./tool-calling-example.mjs";
 
 const { modelId, provider, summary } = createLiveTestContext();
 
 const weatherTool = {
   type: "function",
-  name: "weather",
-  description: "Return the weather for a city.",
+  name: weatherToolName,
+  description: weatherToolDescription,
   strict: true,
   parameters: {
     type: "object",
     properties: {
       city: {
         type: "string",
-        description: "City name to look up",
+        description: weatherCityDescription,
       },
     },
     required: ["city"],
@@ -32,15 +38,14 @@ console.log("");
 
 const response = await provider.responses.create({
   model: modelId,
-  input:
-    "What is the weather in Bangkok? Use the weather tool, then answer in one sentence.",
+  input: weatherPrompt,
   tools: [weatherTool],
-  tool_choice: "auto",
+  tool_choice: "required",
 });
 
 const output = Array.isArray(response?.output) ? response.output : [];
 const toolCalls = collectToolCalls(output);
-const weatherCall = toolCalls.find((call) => call.name === "weather");
+const weatherCall = toolCalls.find((call) => call.name === weatherToolName);
 
 console.log(
   JSON.stringify(

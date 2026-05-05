@@ -182,13 +182,11 @@ Available helpers:
 ## Model Capabilities
 
 - The same package supports both serverless and on-demand inference. On-demand only adds `baseURL` and `userId`.
-- Text generation and streaming are validated on the currently tested serverless and on-demand models.
-- Structured outputs are enabled in the provider and currently work on most tested models except `MiniMaxAI/MiniMax-M2.5`.
-- AI SDK tool calling through `/v1/chat/completions` is currently verified with `mistralai/Devstral-2-123B-Instruct-2512`. Tested GPT OSS models and `MiniMaxAI/MiniMax-M2.5` do not error on this path, but they currently do not emit structured tool calls.
-- Raw Responses API tool calling through `/v1/responses` is currently verified with `mistralai/Devstral-2-123B-Instruct-2512`, GPT OSS models, and `MiniMaxAI/MiniMax-M2.5`. Function tools should include a boolean `strict` field.
-- Tested Qwen variants currently emit tool-call-shaped text instead of structured tool calls, so they need serving-side parser support.
+- Text generation, streaming, and structured outputs are validated on the current eight serverless models.
+- AI SDK tool calling through `/v1/chat/completions` is validated on the current serverless models except GPT OSS models. GPT OSS models currently return reasoning text on this path instead of structured tool calls.
+- Raw Responses API tool calling through `/v1/responses` is validated on the current eight serverless models, including GPT OSS models. Function tools should include a boolean `strict` field.
 - Embeddings, images, audio, and Control Plane APIs are intentionally not part of this package.
-- The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` because it is a clean validated baseline on the current Tensormesh `chat/completions` path.
+- The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` because it is a clean validated baseline on the Tensormesh `chat/completions` path.
 - Serving-side updates may expand or change model-specific capability without any package change.
 
 ## Example App
