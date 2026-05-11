@@ -187,7 +187,7 @@ Available helpers:
 - Responses API function tools should include a boolean `strict` field.
 - GPT OSS tool-calling requests should use `tool_choice: "auto"`; other tested models can use `tool_choice: "required"` when you need to force a tool call.
 - Embeddings, images, audio, and Control Plane APIs are intentionally not part of this package.
-- The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` because it is a clean validated baseline on the Tensormesh `chat/completions` path.
+- The examples in this README use `mistralai/Devstral-2-123B-Instruct-2512` as a conservative default. You can use any model id returned by the models endpoint.
 - Serving-side updates may expand or change model-specific capability without any package change.
 
 ## Example App

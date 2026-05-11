@@ -12,11 +12,11 @@ It includes:
 
 ## Deploy To Vercel
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider&project-name=tensormesh-ai-sdk-starter&repository-name=tensormesh-ai-sdk-starter&root-directory=examples%2Fnext-starter&env=TENSORMESH_INFERENCE_API_KEY,TENSORMESH_CHAT_MODEL,TENSORMESH_STRUCTURED_MODEL,TENSORMESH_TOOL_MODEL&envDescription=TensorMesh%20API%20key%20and%20model%20names%20for%20the%20starter&envLink=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider%2Ftree%2Fmain%2Fexamples%2Fnext-starter%23environment-variables)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider&project-name=tensormesh-ai-sdk-starter&repository-name=tensormesh-ai-sdk-starter&root-directory=examples%2Fnext-starter&env=TENSORMESH_INFERENCE_API_KEY,TENSORMESH_CHAT_MODEL,TENSORMESH_STRUCTURED_MODEL,TENSORMESH_TOOL_MODEL&envDescription=Tensormesh%20API%20key%20and%20model%20names%20for%20the%20starter&envLink=https%3A%2F%2Fgithub.com%2FTensormesh-Production%2Ftensormesh-ai-sdk-provider%2Ftree%2Fmain%2Fexamples%2Fnext-starter%23environment-variables)
 
 The deploy button assumes this repository is public and uses `examples/next-starter`
-as the Vercel root directory. Until `@tensormesh/ai-sdk-provider` is published,
-this starter intentionally depends on the local package with `file:../..`.
+as the Vercel root directory. The starter installs
+`@tensormesh/ai-sdk-provider` from npm.
 
 ## Local Setup
 
@@ -54,8 +54,8 @@ Optional:
 - `TENSORMESH_BASE_URL`
 - `TENSORMESH_USER_ID`
 
-The default models in `.env.local.example` use Devstral because it is the
-cleanest current baseline on the package `chat/completions` path.
+The default models in `.env.local.example` use Devstral as a conservative
+starting point.
 The app also loads available models from `GET /v1/models` and lets you switch
 models from each demo page.
 
@@ -67,14 +67,11 @@ configuration as the source of truth for now.
 
 ## Package Dependency
 
-This workspace version uses:
+This starter uses the published npm package:
 
 ```json
-"@tensormesh/ai-sdk-provider": "file:../.."
+"@tensormesh/ai-sdk-provider": "^0.1.0"
 ```
-
-After the npm package is published, replace that with the published version
-range before using this as a standalone template.
 
 ## Capability Notes
 
